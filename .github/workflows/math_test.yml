@@ -22,5 +22,9 @@ jobs:
               with:
                 python-version: ${{ matrix.python-version }}
             
+            # This step is needed since we are now using a .toml file.
+            - name: Installing Packages
+              run: pip install -e .
+            
             - name: Testing Math Utils
               run: python tests/test_math.py
