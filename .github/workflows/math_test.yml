@@ -8,9 +8,6 @@ on:
 jobs:
     test:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: ./tests/
         
         strategy:
             matrix:
@@ -26,4 +23,4 @@ jobs:
                 python-version: ${{ matrix.python-version }}
             
             - name: Testing Math Utils
-              run: python ./test_math.py
+              run: python tests/test_math.py
