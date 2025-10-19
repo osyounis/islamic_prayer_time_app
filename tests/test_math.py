@@ -9,16 +9,11 @@ Author: Omar Younis
 Date: 28/09/2025 [dd/mm/yyyy format]
 
 """
-import os
-import sys
 import math
 import unittest
 
-# Shows file where to look to import packages.
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
-import utils.math_utils as mu
-from utils.math_utils import _degree_to_radians, _radians_to_degree
+from src.utils import math_utils as mu
+from src.utils.math_utils import _degree_to_radians, _radians_to_degree
 
 
 class TestDegreeToRadianConversion(unittest.TestCase):

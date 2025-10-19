@@ -1,5 +1,6 @@
-<h1 align="center">
+<h3 align="center">
 بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
-</h1>
+</h3><br>
 
-# This is a test
+# Islamic Prayer Time App
+## Quick Summary
