@@ -12,8 +12,8 @@ Date: 28/09/2025 [dd/mm/yyyy format]
 import math
 import unittest
 
-from src.utils import math_utils as mu
-from src.utils.math_utils import _degree_to_radians, _radians_to_degree
+from prayer_times.utils import math_utils as mu
+from prayer_times.utils.math_utils import _degree_to_radians, _radians_to_degree
 
 
 class TestDegreeToRadianConversion(unittest.TestCase):
@@ -144,6 +144,62 @@ class TestTrigFunctions(unittest.TestCase):
         result = mu.dacot(-1)
         self.assertTrue(90 < result < 180)
         self.assertAlmostEqual(result, 90 + 45)
+
+
+class TestDegreesSinCosine(unittest.TestCase):
+    """Sanity checks for dsin and dcos functions."""
+    def test_dsin_30_degrees(self):
+        """sin(30) should equal 0.5
+        """
+        self.assertAlmostEqual(mu.dsin(30), 0.5)
+
+    def test_dsin_90_degrees(self):
+        """sin(90) should equal 1.0
+        """
+        self.assertAlmostEqual(mu.dsin(90), 1.0)
+
+    def test_dcos_60_degrees(self):
+        """cos(60) = 0.5
+        """
+        self.assertAlmostEqual(mu.dcos(60), 0.5)
+
+    def test_dcos_0_degrees(self):
+        """cos(0) = 1
+        """
+        self.assertAlmostEqual(mu.dcos(0), 1.0)
+
+
+class TestDegreeInverseTrig(unittest.TestCase):
+    """Sanity checks for dasin, dacos, and datan2 functions."""
+    def test_dasin_half(self):
+        """asin(0.5) = 30 deg
+        """
+        self.assertAlmostEqual(mu.dasin(0.5), 30.0)
+
+    def test_dasin_one(self):
+        """asin(1) = 90 deg
+        """
+        self.assertAlmostEqual(mu.dasin(1), 90.0)
+
+    def test_dacos_half(self):
+        """acos(0.5) = 60 deg
+        """
+        self.assertAlmostEqual(mu.dacos(0.5), 60.0)
+
+    def test_dacos_one(self):
+        """acos(1) = 0 deg
+        """
+        self.assertAlmostEqual(mu.dacos(1), 0.0)
+
+    def test_datan2_45_degrees(self):
+        """atan2(1, 1) = 45 deg (Quadrant I)
+        """
+        self.assertAlmostEqual(mu.datan2(1, 1), 45.0)
+
+    def test_datan2_90_degrees(self):
+        """atan2(1, 0) = 90 deg
+        """
+        self.assertAlmostEqual(mu.datan2(1, 0), 90.0)
 
 
 if __name__ == '__main__':
