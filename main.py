@@ -22,12 +22,7 @@ def main():
     """
     Main Function - configure your settings here and run calculations.
     """
-
-    print("=" * 60)
-    print("  Islamic Prayer Time Calculator")
-    print("=" * 60)
-    print()
-
+    
     #======================================================================#
     #                          USER CONFIGURATION                          #
     #======================================================================#
