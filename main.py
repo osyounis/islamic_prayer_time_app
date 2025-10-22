@@ -71,11 +71,11 @@ def main():
     Longitude: {LONGITUDE}\u00b0
     Elevation: {ELEVATION}m
 
-🧭 Qibla Direction: {qibla:06.2f}\u00b0  (from North)
+🕋 Qibla Direction: {qibla:06.2f}\u00b0  (from North)
 
 📅 Gregorian Date:  {date.strftime("%A, %B %d, %Y")}
 
-🌙 Hijri Date:  {HIJRI_MONTHS[hij_date["month"]]['en']} {hij_date['day']}, {hij_date['year']} AH
+🌒 Hijri Date:  {HIJRI_MONTHS[hij_date["month"]]['en']} {hij_date['day']}, {hij_date['year']} AH
                 {HIJRI_MONTHS[hij_date["month"]]['ar']} {hij_date['day']}, {hij_date['year']}
 
 ⚙️  Calculation Method: {method_name} ({method_key})

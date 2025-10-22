@@ -222,7 +222,7 @@ def maghrib_time_calc(timestamp: datetime,
     Returns:
         datetime: Maghrib prayer time.
     """
-    # Sam angle calculation as sunrise (due to symmetry of the day around noon)
+    # Same angle calculation as sunrise (due to symmetry of the day around noon)
     theta = 90 + 0.83333 + (0.0347 * math.sqrt(elevation))
     hour_offset = _hour_correction(theta, lat, sun_data)
 
