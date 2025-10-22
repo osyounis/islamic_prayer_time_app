@@ -93,10 +93,14 @@ Different Islamic organizations use slightly different angles for Fajr and Isha.
 - **Standard** (Shafi'i, Maliki, Hanbali): Shadow Length = Object Height + Noon Shadow
 - **Hanafi**: Shadow Length = 2 x Object Height + Noon Shadow
 
+---
+
 ## 🕋 Qibla Direction
 The Qibla is the direction towards the Kaaba in Mecca from your location. Muslims face that direction when praying. This app uses spherical trigonometry to compute the great circle bearing from any location to the Kaaba (21.4225°N, 39.8262°E).
 
 The bearing is given in degrees clockwise from true North (0° = North, 90° = East, 180° = South, 270° = West).
+
+---
 
 ## ⚙️ Configuration Options
 ### `UserSettings` Parameters
@@ -217,10 +221,10 @@ The prayer time calculation involve the following:
   >
   > The result is converted from radians to degrees and normalized to 0-360°.
 
-  ---
-
 ### Further Reading
 For detailed mathematical derivations and implementation details, see `docs/calculation_methodology.md` (when available).
+
+---
 
 ## 📁 Project Structure
 ```
@@ -245,6 +249,8 @@ islamic_prayer_time_app/
   └── pyproject.toml                   # Package metadata
 ```
 
+---
+
 ## 🧪 Testing
 You can run the tests in this project using two methods:
 ```bash
@@ -261,6 +267,8 @@ python3 tests/test_math.py
 - 🔄 Calendar conversions (planned)
 - 🔄 Prayer time accuracy (planned)
 
+---
+
 ## 🤝 Contributing
 Contributions are welcome! This project is designed to run correctly but also to be educational for others.
 ### Ways to Contribute
@@ -276,6 +284,8 @@ If you would like to contribute to this project, below is a list of way you can 
 1. Add tests for new features/functionality
 1. Update documentation as needed
 1. Verify all tests pass
+
+---
 
 ## 📚 Resources & References
 This implementation is based on astronomical algorithms and prayer time calculation methods from various
@@ -337,18 +347,24 @@ This implementation is based on astronomical algorithms and prayer time calculat
   - Results from PrayTimes.org
   - Output from other established prayer time calculators
 
-  ---
-
+---
 
 ## 🪪 License
 This project is licensed under **GNU General Public License v3.0 or later (GPL-3.0-or-later).**
 
-See [LICENSE]() for full text.
+See [LICENSE](https://github.com/osyounis/islamic_prayer_time_app/blob/main/LICENSE) for full text.
+
+---
+
 ## ✍️ Author
 **Omar Younis**
+
+---
 
 ## ⚠️ Important Notes
 1. **Accuracy**: While this calculator uses established astronomical algorithms, prayer times may vary slightly from local mosque announcements due to different conventions, adjustments, or local sighting committees.
 1. **Hijri Dates**: Hijri calendar dates are calculated astronomically and may differ from official announcements based on moon sighting. Always verify with your local Islamic authority.
 1. **High Latitudes**: In extreme latitudes (near polar regions), normal calculation methods may not work during certain times of year. The calculator includes adjustments using the Angle-Based Rule, but consult local scholars for guidance.
 1. **Qibla**: Calculated Qibla direction is based on great circle calculations. Physical obstacles or magnetic declination may affect compass readings when aligning yourself for prayer.
+
+---
