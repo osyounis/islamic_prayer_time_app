@@ -222,7 +222,7 @@ The prayer time calculation involve the following:
   > The result is converted from radians to degrees and normalized to 0-360°.
 
 ### Further Reading
-For detailed mathematical derivations and implementation details, see `docs/calculation_methodology.md` (when available).
+For detailed mathematical derivations and implementation details, see [`docs/calculation_methodology.md`]() (when available).
 
 ---
 
