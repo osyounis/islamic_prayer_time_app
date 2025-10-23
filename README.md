@@ -222,7 +222,7 @@ The prayer time calculation involve the following:
   > The result is converted from radians to degrees and normalized to 0-360°.
 
 ### Further Reading
-For detailed mathematical derivations and implementation details, see [`docs/calculation_methodology.md`](https://github.com/osyounis/islamic_prayer_time_app/blob/main/docs/calculation_methodology.md) (when available).
+For detailed mathematical derivations and implementation details, see [`docs/calculation_methodology.md`](https://github.com/osyounis/islamic_prayer_time_app/blob/main/docs/calculation_methodology.md).
 
 ---
 
@@ -244,8 +244,18 @@ islamic_prayer_time_app/
   │       └── time_utils.py            # Time manipulation utilities
   ├── tests/                           # Unit tests
   │   └── test_math.py                 # Math utilities tests
-  ├── docs/                            # Documentation (planned)
+  ├── docs/                            # Documentation
+  |   ├── api_reference.md
+  |   ├── calculation_methodology.md
+  |   ├── hijri_calendar.md
+  |   └── qibla_calculation.md
   ├── examples/                        # Usage examples (planned)
+  |   ├── basic_usage.py
+  |   ├── multiple_locations.py
+  |   ├── different_methods.py
+  |   ├── monthly_calendar.py
+  |   ├── qibla_only.py
+  |   └── hijri_date_conversion.py
   └── pyproject.toml                   # Package metadata
 ```
 
