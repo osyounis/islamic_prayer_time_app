@@ -636,6 +636,6 @@ print(f"Arabic: {month_name_ar} {hijri['day']}, {hijri['year']}")
 
 ---
 
-**For more information, see [`calculation_methodolgy.md`]().**
+**For more information, see [`/docs/calculation_methodolgy.md`](https://github.com/osyounis/islamic_prayer_time_app/blob/main/docs/calculation_methodology.md).**
 
 ---
