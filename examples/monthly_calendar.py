@@ -15,11 +15,10 @@ from prayer_times.config import UserSettings
 from prayer_times.calculator.calculator import calculate_prayer_times
 
 
-def main():
+def main() -> None:
     """
     Generate a monthly prayer time calendar.
     """
-
     # ==================== CONFIGURATION ====================
 
     # Location (example: Fullerton, CA)

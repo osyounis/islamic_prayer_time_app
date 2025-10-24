@@ -5,6 +5,8 @@
 # Islamic Prayer Time App
 A Python approach for calculating Islamic prayer times and Qibla direction based on astronomical calculations.
 
+[![Tests](https://github.com/osyounis/islamic_prayer_time_app/actions/workflows/tests.yml/badge.svg)](https://github.com/osyounis/islamic_prayer_time_app/actions/workflows/tests.yml)
+
 ---
 
 ## 📖 Overview
@@ -25,6 +27,9 @@ This project also attempts to explain how these calculations are done.
 ---
 
 ## 🚀 Quick Start
+
+### Requirements
+- Python 3.8 or higher
 
 ### Installation
 
@@ -243,39 +248,55 @@ islamic_prayer_time_app/
   │       ├── math_utils.py            # Mathematical utilities
   │       └── time_utils.py            # Time manipulation utilities
   ├── tests/                           # Unit tests
-  │   └── test_math.py                 # Math utilities tests
+  │   ├── test_astronomy.py
+  │   ├── test_calendar.py
+  │   ├── test_qibla.py
+  │   ├── test_times.py
+  │   ├── test_calculator.py
+  │   └── test_math.py
   ├── docs/                            # Documentation
-  |   ├── api_reference.md
-  |   ├── calculation_methodology.md
-  |   ├── hijri_calendar.md
-  |   └── qibla_calculation.md
-  ├── examples/                        # Usage examples (planned)
-  |   ├── basic_usage.py
-  |   ├── multiple_locations.py
-  |   ├── different_methods.py
-  |   ├── monthly_calendar.py
-  |   ├── qibla_only.py
-  |   └── hijri_date_conversion.py
+  │   ├── api_reference.md
+  │   ├── calculation_methodology.md
+  │   ├── hijri_calendar.md
+  │   └── qibla_calculation.md
+  ├── examples/                        # Usage examples
+  │   ├── basic_usage.py
+  │   ├── multiple_locations.py
+  │   ├── different_methods.py
+  │   ├── monthly_calendar.py
+  │   ├── qibla_only.py
+  │   └── hijri_date_conversion.py
   └── pyproject.toml                   # Package metadata
 ```
 
 ---
 
 ## 🧪 Testing
-You can run the tests in this project using two methods:
+You can run the tests in this project using these methods:
+
 ```bash
 # Run all tests at once
 python3 -m unittest discover tests
+
+# Run tests with verbose output
+python3 -m unittest discover tests -v
 
 # Run a specific test file (e.g. test_math.py)
 python3 tests/test_math.py
 ```
 
+All tests are automatically run via GitHub Actions on every push and pull request.
+
 ### Current Test Coverage
-- ✅ Math utilities (trigonometric functions, conversions)
-- 🔄 Astronomy calculations (planned)
-- 🔄 Calendar conversions (planned)
-- 🔄 Prayer time accuracy (planned)
+
+- ✅ **Math utilities** - Trigonometric functions and conversions (29 tests)
+- ✅ **Astronomy calculations** - Sun coordinates, equation of time, seasonal variations (6 tests)
+- ✅ **Calendar conversions** - Julian Day, Hijri calendar (16 tests)
+- ✅ **Qibla direction** - Major cities worldwide, edge cases (19 tests)
+- ✅ **Prayer time calculations** - All 5 prayers + sunrise, multiple methods (23 tests)
+- ✅ **Main calculator** - Full integration tests (12 tests)
+
+**Total: 105 tests pass ✅**
 
 ---
 

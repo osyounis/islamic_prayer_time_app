@@ -1,0 +1,51 @@
+name: Tests
+
+# Run tests on push to any branch and on all pull requests
+on:
+    push:
+        branches:
+            - '*'
+    pull_request:
+        branches: 
+            - '*'
+
+jobs:
+    test:
+        name: Test on Python ${{ matrix.python-version }}
+        runs-on: ubuntu-latest
+
+        strategy:
+            # Don't stop all jobs if one fails
+            fail-fast: false
+            matrix:
+                # Test on multiple Python versions
+                python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+        
+        steps:
+            # Step 1: Check out the repo code
+            - name: Check out code
+              uses: actions/checkout@v4
+            
+            # Step 2: Setting up Python environment
+            - name: Setting up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v4
+              with:
+                python-version: ${{ matrix.python-version }}
+            
+            # Step 3: Display the Python version
+            - name: Display Python version
+              run: python -c "import sys; print(sys.version)"
+            
+            # Step 4: Install packages and coverage tools
+            - name: Installing packages and dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install -e .
+            
+            # Step 5: Run the test suite with coverage
+            - name: Running tests
+              run: python -m unittest discover -s tests -p "test_*.py" -v
+            
+            # Step 6: Checking example file runs
+            - name: Running example file
+              run: python examples/basic_usage.py

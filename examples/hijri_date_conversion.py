@@ -16,7 +16,7 @@ from prayer_times.core.calendar import julian_date, hijri_date
 from prayer_times.config import get_hijri_month_name
 
 
-def main():
+def main() -> None:
     """
     Demonstrate Hijri calendar conversion.
     """
@@ -51,7 +51,7 @@ def main():
     print("="*80 + "\n")
 
 
-def convert_and_display(date, correction=0):
+def convert_and_display(date, correction=0) -> None:
     """
     Convert a Gregorian date to Hijri and display both.
     
@@ -78,7 +78,7 @@ def convert_and_display(date, correction=0):
         print(f"  (with correction: {correction:+d} day{'s' if abs(correction) > 1 else ''})")
 
 
-def display_all_months():
+def display_all_months() -> None:
     """
     Display all 12 Hijri months.
     """
@@ -91,7 +91,7 @@ def display_all_months():
         print(f"  {month_num:<5} {en_name:<25} {ar_name:<25}")
 
 
-def demonstrate_correction():
+def demonstrate_correction() -> None:
     """
     Show how the correction factor affects the date.
     """

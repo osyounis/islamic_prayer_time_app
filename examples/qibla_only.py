@@ -14,7 +14,7 @@ Date: 22/10/2025 [dd/mm/yyyy]
 from prayer_times.core.qibla import qibla_direction
 
 
-def main():
+def main() -> None:
     """
     Calculate Qibla direction for various cities.
     """

@@ -107,4 +107,10 @@ def _equation_of_time(sun_data: Dict[str, float]) -> float:
     Returns:
         float: The equation of time in minutes.
     """
-    return (sun_data["solar_lng"] - sun_data["ascension"]) * 4
+    # Calculate angle difference
+    diff = sun_data["solar_lng"] - sun_data["ascension"]
+
+    # Normalize to fit in range [-180, 180]
+    diff = (diff + 180) % 360 - 180
+
+    return diff * 4

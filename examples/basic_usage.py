@@ -16,7 +16,7 @@ from prayer_times.config import UserSettings
 from prayer_times.calculator.calculator import calculate_prayer_times
 
 
-def main():
+def main() -> None:
     """
     Calculates and display the prayer times for today.
     """

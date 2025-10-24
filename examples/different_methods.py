@@ -16,7 +16,7 @@ from prayer_times.config import UserSettings, get_method_name
 from prayer_times.calculator.calculator import calculate_prayer_times
 
 
-def main():
+def main() -> None:
     """
     Compare prayer times using different calculation methods.
     """

@@ -57,7 +57,7 @@ CITIES = {
 }
 
 
-def main():
+def main() -> None:
     """
     Calculate and display prayer times for multiple cities.
     """
