@@ -48,7 +48,7 @@ def _hour_correction(theta: float, lat: float, sun_data: Dict[str, float]) -> fl
 def midday_time_calc(timestamp: datetime, lng: float, sun_data: Dict[str, float]) -> datetime:
     """
     Calculates when solar midday occurs based on a location and sun coordinates.
-    
+
     Solar midday (solar noon) is when the Sun reaches its highest point in the
     sky. This is slightly different from clock noon due to the equation of time
     and longitude differences within a timezone.
@@ -62,7 +62,10 @@ def midday_time_calc(timestamp: datetime, lng: float, sun_data: Dict[str, float]
         datetime: The time of Midday.
     """
     today_date = datetime.combine(timestamp, datetime.min.time())
-    timezone = int(today_date.astimezone().strftime("%z")) / 100
+
+    # Estimate timezone from longitude (each 15° of longitude ≈ 1 hour)
+    # This ensures consistent results regardless of system timezone
+    timezone = round(lng / 15)
 
     # Longitudinal difference in hours. Also 15 longitudinal degrees is 1 hour.
     lng_diff = ((timezone * 15) - lng) / 15

@@ -142,7 +142,7 @@ class TestSunriseTimeCalc(unittest.TestCase):
         sunrise = sunrise_time_calc(midday, lat, sun_data, elevation)
 
         # Verify calculated time
-        expected_hour = 4
+        expected_hour = 7
         expected_minute = 19
 
         self.assertEqual(sunrise.hour, expected_hour)
@@ -211,7 +211,7 @@ class TestAsrTimeCalc(unittest.TestCase):
         asr = asr_time_calc(midday, lat, sun_data, hanafi=False)
 
         # Verify calculated time
-        expected_hour = 11
+        expected_hour = 14
         expected_minute = 21
 
         self.assertEqual(asr.hour, expected_hour)
@@ -277,7 +277,7 @@ class TestMaghribTimeCalc(unittest.TestCase):
         maghrib = maghrib_time_calc(midday, lat, sun_data, elevation)
 
         # Verify calculated time
-        expected_hour = 13
+        expected_hour = 16
         expected_minute = 39
 
         self.assertEqual(maghrib.hour, expected_hour)
@@ -346,7 +346,7 @@ class TestFajrTimeCalc(unittest.TestCase):
         fajr = fajr_time_calc(midday, lat, sun_data, 'isna', sunrise, maghrib)
 
         # Verify calculated time
-        expected_hour = 2
+        expected_hour = 5
         expected_minute = 58
 
         self.assertEqual(fajr.hour, expected_hour)
@@ -419,7 +419,7 @@ class TestIshaTimeCalc(unittest.TestCase):
         isha = isha_time_calc(midday, lat, sun_data, 'isna', maghrib, sunrise, ramadan=False)
 
         # Verify calculated time
-        expected_hour = 15
+        expected_hour = 18
         expected_minute = 0
 
         self.assertEqual(isha.hour, expected_hour)
@@ -531,7 +531,7 @@ class TestPrayerTimeSequence(unittest.TestCase):
         self.isha = isha_time_calc(self.midday, self.lat, self.sun_data,
                                    'isna', self.maghrib, self.sunrise)
 
-    def test_correct_chronological_sequence(self):
+    def test_correct_order(self):
         """
         Tests that all prayer times are in correct order. The correct sequence
         is: Fajr < Sunrise < Dhuhr < Asr < Maghrib < Isha
