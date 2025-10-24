@@ -139,7 +139,8 @@ class PrayerTimeCalculator:
             >>> print(f"Fajr: {results['times_rounded']['fajr'].strftime('%H:%M')}")
         """
         if date is None:
-            date = datetime.now()
+            # Use timezone-aware datetime for proper DST handling
+            date = datetime.now().astimezone()
 
         # 1: Calculate Qibla direction
         qibla = qibla_direction(self.latitude, self.longitude)

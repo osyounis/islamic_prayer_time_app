@@ -61,7 +61,7 @@ def main() -> None:
     """
     Calculate and display prayer times for multiple cities.
     """
-    date = datetime.now()
+    date = datetime.now().astimezone()
 
     print("\n" + "="*90)
     print(f"Prayer Times Around the World - {date.strftime('%B %d, %Y')}")

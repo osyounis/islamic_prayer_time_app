@@ -88,8 +88,11 @@ def _b_value(date: datetime) -> int:
         int: The B-value correction factor (0 for Julian calendar dates,
         or a calculated offset for Gregorian calendar dates).
     """
+    # Strip timezone info for comparison (only compare dates, not times/timezones)
+    date_naive = date.replace(tzinfo=None) if date.tzinfo else date
+
     # Date is before Gregorian switch so no offset is needed.
-    if REFERENCE_DATE > date:
+    if REFERENCE_DATE > date_naive:
         return 0
 
     # Date is after Gregorian switch so offset is needed.

@@ -29,7 +29,7 @@ This project also attempts to explain how these calculations are done.
 ## 🚀 Quick Start
 
 ### Requirements
-- Python 3.8 or higher
+- Python 3.9 or higher
 
 ### Installation
 
@@ -296,7 +296,7 @@ All tests are automatically run via GitHub Actions on every push and pull reques
 - ✅ **Prayer time calculations** - All 5 prayers + sunrise, multiple methods (23 tests)
 - ✅ **Main calculator** - Full integration tests (12 tests)
 
-**Total: 105 tests pass ✅**
+**Total: 105 tests ✅**
 
 ---
 

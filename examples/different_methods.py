@@ -26,7 +26,7 @@ def main() -> None:
     LONGITUDE = -117.928611
     ELEVATION = 50
 
-    date = datetime.now()
+    date = datetime.now().astimezone()
 
     # Methods to compare
     methods = ['isna', 'mwl', 'egas', 'uqu', 'uisk', 'jakim']

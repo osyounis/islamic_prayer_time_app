@@ -11,7 +11,7 @@ authors = [
     {name = "Omar Younis"}
 ]
 license = {text = "GPL-3.0-or-later"}
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [tool.setuptools.packages.find]
 where = ["."]

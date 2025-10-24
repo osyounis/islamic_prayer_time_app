@@ -44,8 +44,8 @@ def main() -> None:
         hijri_correction=2
     )
 
-    # Calculate for today
-    date = datetime.now()
+    # Calculate for today (use timezone-aware datetime for proper DST handling)
+    date = datetime.now().astimezone()
     results = calculate_prayer_times(LATITUDE, LONGITUDE, ELEVATION, date, settings)
 
 

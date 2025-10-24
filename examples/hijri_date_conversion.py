@@ -28,7 +28,7 @@ def main() -> None:
     # Example 1: Convert today's date
     print("Example 1: Today's Date")
     print("-"*80)
-    convert_and_display(datetime.now())
+    convert_and_display(datetime.now().astimezone())
     print()
 
     # Example 2: Convert a specific date
@@ -95,7 +95,7 @@ def demonstrate_correction() -> None:
     """
     Show how the correction factor affects the date.
     """
-    date = datetime.now()
+    date = datetime.now().astimezone()
     jd = julian_date(date)
 
     print(f"  Date: {date.strftime('%B %d, %Y')}")

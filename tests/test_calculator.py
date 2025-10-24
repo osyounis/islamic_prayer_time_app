@@ -93,25 +93,25 @@ class TestPrayerTimeCalculator(unittest.TestCase):
         # Test Gregorian date
         self.assertEqual(result['gregorian_date'], date)
 
-        # Test prayer times
+        # Test prayer times (in EST - Eastern Standard Time, UTC-5)
         times = result['times']
 
-        self.assertEqual(times['fajr'].hour, 2)
+        self.assertEqual(times['fajr'].hour, 5)
         self.assertAlmostEqual(times['fajr'].minute, 59, delta=1)
 
-        self.assertEqual(times['sunrise'].hour, 4)
+        self.assertEqual(times['sunrise'].hour, 7)
         self.assertAlmostEqual(times['sunrise'].minute, 20, delta=1)
 
-        self.assertEqual(times['dhuhr'].hour, 9)
+        self.assertEqual(times['dhuhr'].hour, 12)
         self.assertAlmostEqual(times['dhuhr'].minute, 0, delta=1)
 
-        self.assertEqual(times['asr'].hour, 11)
+        self.assertEqual(times['asr'].hour, 14)
         self.assertAlmostEqual(times['asr'].minute, 22, delta=1)
 
-        self.assertEqual(times['maghrib'].hour, 13)
+        self.assertEqual(times['maghrib'].hour, 16)
         self.assertAlmostEqual(times['maghrib'].minute, 40, delta=1)
 
-        self.assertEqual(times['isha'].hour, 15)
+        self.assertEqual(times['isha'].hour, 18)
         self.assertAlmostEqual(times['isha'].minute, 1, delta=1)
 
     def test_prayer_times_chronological_order(self):
@@ -133,7 +133,7 @@ class TestPrayerTimeCalculator(unittest.TestCase):
         """
         Tests MWL calculation method for New York on Jan 1, 2025.
         MWL uses 18° for Fajr and 17° for Isha.
-        Expected: Fajr 02:42:44, Isha 15:12:54
+        Expected (in EST): Fajr 05:42:44, Isha 18:12:54
         """
         date = datetime(2025, 1, 1)
         lat = 40.7128
@@ -146,12 +146,12 @@ class TestPrayerTimeCalculator(unittest.TestCase):
 
         times = result['times']
 
-        # Tests MWL Fajr time
-        self.assertEqual(times['fajr'].hour, 2)
+        # Tests MWL Fajr time (in EST)
+        self.assertEqual(times['fajr'].hour, 5)
         self.assertAlmostEqual(times['fajr'].minute, 42, delta=1)
 
-        # Tests MWL Isha time
-        self.assertEqual(times['isha'].hour, 15)
+        # Tests MWL Isha time (in EST)
+        self.assertEqual(times['isha'].hour, 18)
         self.assertAlmostEqual(times['isha'].minute, 12, delta=1)
 
         # MWL Fajr should be earlier than ISNA Fajr

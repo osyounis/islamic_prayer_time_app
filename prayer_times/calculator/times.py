@@ -12,8 +12,9 @@ Date: 20/10/2025 [dd/mm/yyyy]
 """
 
 import math
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict
+from zoneinfo import ZoneInfo
 
 from prayer_times.config import get_fajr_angle, get_isha_config, HIGH_LATITUDE_THRESHOLD
 from prayer_times.utils.math_utils import dsin, dcos, dacos, dcot, dacot, dasin
@@ -54,21 +55,29 @@ def midday_time_calc(timestamp: datetime, lng: float, sun_data: Dict[str, float]
     and longitude differences within a timezone.
 
     Args:
-        timestamp (datetime): Your current date.
+        timestamp (datetime): Your current date. Can be timezone-aware or naive.
+            If timezone-aware, uses that timezone's offset.
+            If naive, estimates timezone from longitude (standard time, no DST).
         lng (float): Your current longitude in degrees.
         sun_data (Dict[str, float]): A dictionary containing the Sun coordinate data.
 
     Returns:
-        datetime: The time of Midday.
+        datetime: The time of Midday (in the same timezone as input).
     """
     today_date = datetime.combine(timestamp, datetime.min.time())
 
-    # Estimate timezone from longitude (each 15° of longitude ≈ 1 hour)
-    # This ensures consistent results regardless of system timezone
-    timezone = round(lng / 15)
+    # Preserve timezone awareness from input
+    if timestamp.tzinfo is not None:
+        # Use the timezone from the input datetime
+        today_date = today_date.replace(tzinfo=timestamp.tzinfo)
+        tz_offset = timestamp.utcoffset().total_seconds() / 3600
+    else:
+        # For naive datetimes, estimate timezone from longitude
+        # Note: This doesn't account for DST, but works for tests
+        tz_offset = round(lng / 15)
 
     # Longitudinal difference in hours. Also 15 longitudinal degrees is 1 hour.
-    lng_diff = ((timezone * 15) - lng) / 15
+    lng_diff = ((tz_offset * 15) - lng) / 15
     equ_time = _equation_of_time(sun_data)
 
     # Find the hour number for Midday and converting it to a datetime.

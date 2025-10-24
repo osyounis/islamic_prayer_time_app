@@ -22,16 +22,20 @@ def main():
     """
     Main Function - configure your settings here and run calculations.
     """
-    
+
     #======================================================================#
     #                          USER CONFIGURATION                          #
     #======================================================================#
     # Change these values for your location and preferences
 
     # Your geographic data (coordinates and elevation)
-    LATITUDE = 33.88                # Fullerton, CA (positive = North)
-    LONGITUDE = -117.928611         # (negative = West)
-    ELEVATION = 50                  # meters above sea level
+    # LATITUDE = 33.88                # Fullerton, CA (positive = North)
+    # LONGITUDE = -117.928611         # (negative = West)
+    # ELEVATION = 50                  # meters above sea level
+
+    LATITUDE = 32.831011            # San Diego, CA (positive = North)
+    LONGITUDE = -117.132686         # (negative = West)
+    ELEVATION = 0                   # meters above sea level
 
     # Your prayer calculation preferences
     settings = UserSettings(
@@ -46,7 +50,8 @@ def main():
     #======================================================================#
     #                          CALCULATION                                 #
     #======================================================================#
-    date = datetime.now() + timedelta(days=DAY_OFFSET)
+    # Use timezone-aware datetime for proper DST handling
+    date = datetime.now().astimezone() + timedelta(days=DAY_OFFSET)
     print()
 
     results = calculate_prayer_times(LATITUDE, LONGITUDE, ELEVATION, date, settings)
