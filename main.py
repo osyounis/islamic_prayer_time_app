@@ -29,13 +29,13 @@ def main():
     # Change these values for your location and preferences
 
     # Your geographic data (coordinates and elevation)
-    # LATITUDE = 33.88                # Fullerton, CA (positive = North)
-    # LONGITUDE = -117.928611         # (negative = West)
-    # ELEVATION = 50                  # meters above sea level
+    LATITUDE = 33.88                # Fullerton, CA (positive = North)
+    LONGITUDE = -117.928611         # (negative = West)
+    ELEVATION = 50                  # meters above sea level
 
-    LATITUDE = 32.831011            # San Diego, CA (positive = North)
-    LONGITUDE = -117.132686         # (negative = West)
-    ELEVATION = 0                   # meters above sea level
+    # LATITUDE = 32.831011            # San Diego, CA (positive = North)
+    # LONGITUDE = -117.132686         # (negative = West)
+    # ELEVATION = 0                   # meters above sea level
 
     # Your prayer calculation preferences
     settings = UserSettings(
