@@ -136,7 +136,7 @@ DEFAULT_HIGH_LATITUDE_METHOD = 'angle_based'    # Method for high latitude
 #===============================================================================
 #                         CONFIG HELPER FUNCTIONS
 #===============================================================================
-def get_method_config(method_key: str) -> Dict[str: Any]:
+def get_method_config(method_key: str) -> Dict[str, Any]:
     """
     Gets calculation method configuration if valid, otherwise throws an error
     and lists the valid method_keys available.
