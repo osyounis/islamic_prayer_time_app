@@ -16,6 +16,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from typing import Optional
+import traceback
 
 from prayer_times.calculator.calculator import calculate_prayer_times
 from prayer_times.config import (
@@ -157,11 +158,11 @@ def validate_coordinates(lat: float, lng: float) -> None:
     Raises:
         ValueError: If coordinates are out of valid range
     """
-    if not (-90 <= lat <= 90):
+    if not -90 <= lat <= 90:
         raise ValueError(
             f"Invalid latitude: {lat}. Must be between -90 and 90 degrees."
         )
-    if not (-180 <= lng <= 180):
+    if not -180 <= lng <= 180:
         raise ValueError(
             f"Invalid longitude: {lng}. Must be between -180 and 180 degrees."
         )
@@ -381,7 +382,6 @@ def main(argv=None) -> int:
         # Catch any unexpected errors to provide graceful CLI error handling
         # rather than crashing with a raw traceback
         print(f"\nUnexpected error: {e}\n", file=sys.stderr)
-        import traceback
         traceback.print_exc(file=sys.stderr)
         return 1
 

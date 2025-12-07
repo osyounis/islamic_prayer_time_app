@@ -448,12 +448,12 @@ All tests are automatically run via GitHub Actions on every push and pull reques
 - ✅ **Math utilities** - Trigonometric functions and conversions (29 tests)
 - ✅ **Astronomy calculations** - Sun coordinates, equation of time, seasonal variations (6 tests)
 - ✅ **Calendar conversions** - Julian Day, Hijri calendar (16 tests)
-- ✅ **Qibla direction** - Major cities worldwide, edge cases (19 tests)
+- ✅ **Qibla direction** - Major cities worldwide, edge cases (20 tests)
 - ✅ **Prayer time calculations** - All 5 prayers + sunrise, multiple methods (23 tests)
 - ✅ **Main calculator** - Full integration tests (12 tests)
 - ✅ **CLI interface** - Argument parsing, validation, output formatting, integration (74 tests)
 
-**Total: 179 tests ✅**
+**Total: 180 tests ✅**
 
 ---
 
