@@ -11,7 +11,6 @@ Date: 07/12/2024 [dd/mm/yyyy]
 """
 
 import unittest
-import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from io import StringIO
