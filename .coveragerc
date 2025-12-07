@@ -1,0 +1,23 @@
+[run]
+source = prayer_times
+omit =
+    */tests/*
+    */test_*
+    */__init__.py
+    */examples/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+
+[xml]
+output = coverage.xml
+
+[html]
+directory = htmlcov

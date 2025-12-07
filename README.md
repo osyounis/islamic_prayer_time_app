@@ -6,6 +6,7 @@
 A Python approach for calculating Islamic prayer times and Qibla direction based on astronomical calculations.
 
 [![Tests](https://github.com/osyounis/islamic_prayer_time_app/actions/workflows/tests.yml/badge.svg)](https://github.com/osyounis/islamic_prayer_time_app/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/osyounis/islamic_prayer_time_app/graph/badge.svg)](https://codecov.io/gh/osyounis/islamic_prayer_time_app)
 ![Static Badge](https://img.shields.io/badge/python-3.9%2B-blue?logo=python&logoColor=white)
 ![GitHub License](https://img.shields.io/github/license/osyounis/islamic_prayer_time_app)
 
