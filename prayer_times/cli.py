@@ -184,21 +184,21 @@ def parse_date(date_str: str, timezone_str: Optional[str] = None) -> datetime:
     """
     try:
         date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-    except ValueError:
+    except ValueError as exc:
         raise ValueError(
             f"Invalid date format: '{date_str}'. "
             f"Use ISO 8601 format: YYYY-MM-DD (e.g., 2025-01-15)"
-        )
+        ) from exc
 
     # Make timezone-aware
     if timezone_str:
         try:
             tz = ZoneInfo(timezone_str)
-        except ZoneInfoNotFoundError:
+        except ZoneInfoNotFoundError as exc:
             raise ZoneInfoNotFoundError(
                 f"Invalid timezone: '{timezone_str}'. "
                 f"Use IANA timezone names (e.g., America/New_York, Asia/Dubai)"
-            )
+            ) from exc
         return date_obj.replace(tzinfo=tz)
     else:
         # Use system local timezone
@@ -337,11 +337,11 @@ def main(argv=None) -> int:
                 try:
                     tz = ZoneInfo(args.timezone)
                     date = datetime.now(tz)
-                except ZoneInfoNotFoundError:
+                except ZoneInfoNotFoundError as exc:
                     raise ZoneInfoNotFoundError(
                         f"Invalid timezone: '{args.timezone}'. "
                         f"Use IANA timezone names (e.g., America/New_York)"
-                    )
+                    ) from exc
             else:
                 date = datetime.now().astimezone()
 
@@ -377,7 +377,9 @@ def main(argv=None) -> int:
     except KeyboardInterrupt:
         print("\n\nInterrupted by user", file=sys.stderr)
         return 1
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
+        # Catch any unexpected errors to provide graceful CLI error handling
+        # rather than crashing with a raw traceback
         print(f"\nUnexpected error: {e}\n", file=sys.stderr)
         import traceback
         traceback.print_exc(file=sys.stderr)
