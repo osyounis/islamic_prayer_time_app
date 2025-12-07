@@ -13,6 +13,9 @@ authors = [
 license = {text = "GPL-3.0-or-later"}
 requires-python = ">=3.9"
 
+[project.scripts]
+prayer-times = "prayer_times.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["prayer_times*"]

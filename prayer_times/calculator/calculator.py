@@ -166,7 +166,8 @@ class PrayerTimeCalculator:
                               sun_info,
                               self.settings.calculation_method,
                               sunrise,
-                              maghrib)
+                              maghrib,
+                              self.settings)
 
         # 7: Calculate Isha (might use Maghrib time for fix-time method)
         is_ramadan = hij_date['month'] == 9
@@ -176,7 +177,8 @@ class PrayerTimeCalculator:
                               self.settings.calculation_method,
                               maghrib,
                               sunrise,
-                              ramadan=is_ramadan)
+                              ramadan=is_ramadan,
+                              settings=self.settings)
 
         # 8: Calculates Asr (depends on Standard or Hanafi)
         use_hanafi = self.settings.asr_method == 'hanafi'

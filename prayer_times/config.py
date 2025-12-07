@@ -17,7 +17,7 @@ Date: 19/10/2025 [dd/mm/yyyy]
 """
 
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 #===============================================================================
@@ -183,61 +183,93 @@ def get_method_name(method_key: str) -> str:
     return get_method_config(method_key)['name']
 
 
-def get_fajr_angle(method_key: str) -> float:
+def get_fajr_angle(method_key: str, settings: Optional['UserSettings'] = None) -> float:
     """
-    Gets the Fajr angle for a particular calculation method.
+    Gets the Fajr angle, checking custom settings first.
 
     Args:
         method_key (str): The method key (e.g. 'isna', 'uqu')
+        settings (Optional[UserSettings]): User settings with potential custom angle
 
     Returns:
         float: The Fajr angle in degrees
-    
+
     Example:
         >>> get_fajr_angle('isna')
         15.0
+        >>> custom_settings = UserSettings(fajr_angle=16.5)
+        >>> get_fajr_angle('isna', custom_settings)
+        16.5
     """
+    # Check for custom angle first
+    if settings is not None and settings.fajr_angle is not None:
+        return settings.fajr_angle
+
+    # Fall back to method default
     return get_method_config(method_key)['fajr_angle']
 
 
-def get_isha_config(method_key: str) -> Dict[str, Any]:
+def get_isha_config(method_key: str, settings: Optional['UserSettings'] = None) -> Dict[str, Any]:
     """
-    Gets the Isha prayer configuration for a calculation method.
-    
+    Gets the Isha prayer configuration, checking custom settings first.
+
     This handles when we are using a fixed_time interval after Maghrib, or if we
     are going to use an angle based approach to find Isha prayer time.
 
     Args:
         method_key (str): The method key (e.g. 'isna', 'uqu')
+        settings (Optional[UserSettings]): User settings with potential custom values
 
     Returns:
         Dict[str, Any]: Configuration dictionary with one of the following
         formats:
-        
+
         Angle-Based method:
         {
             'type': 'angle',
             'angle': <float>    # degrees below horizon
         }
-        
+
         Fixed-Time method:
         {
             'type': 'fixed_time',
             'offset_normal': <int>,  # minutes after Maghrib
             'offset_ramadan': <int>  # minutes after Maghrib during Ramadan
         }
-    
+
     Examples:
         Angle-Based method:
         >>> config = get_isha_config('isna')
         >>> print(config)
         {'type': 'angle', 'angle': 15.0}
-        
+
         Fixed-Time method:
         >>> config = get_isha_config('uqu')
         >>> print(config)
         {'type': 'fixed_time', 'offset_normal': 90, 'offset_ramadan': 120}
+
+        Custom angle:
+        >>> custom_settings = UserSettings(isha_angle=13.5)
+        >>> config = get_isha_config('isna', custom_settings)
+        >>> print(config)
+        {'type': 'angle', 'angle': 13.5}
     """
+    # Check for custom interval first
+    if settings is not None and settings.isha_interval is not None:
+        return {
+            'type': 'fixed_time',
+            'offset_normal': settings.isha_interval,
+            'offset_ramadan': settings.isha_interval
+        }
+
+    # Check for custom angle
+    if settings is not None and settings.isha_angle is not None:
+        return {
+            'type': 'angle',
+            'angle': settings.isha_angle
+        }
+
+    # Fall back to method default
     config = get_method_config(method_key)
     # Need to check if we need to do the fixed method or angle method.
     if config['isha_type'] == 'angle':
@@ -326,40 +358,62 @@ def list_all_methods() -> Dict[str, str]:
 class UserSettings:
     """
     A user's preferences for the prayer calculation.
-    
+
     This class provides an easy way to bundle a user's preferences.
-    
+
     Attributes:
         calculation_method: The calculation method used (e.g. 'isna')
         asr_method: Asr calculation method - 'standard' or 'hanafi'
         hijri_correction: Days to adjust calculated Hijri date (default: 0)
-    
+        fajr_angle: Optional custom Fajr angle in degrees (overrides method default)
+        isha_angle: Optional custom Isha angle in degrees (overrides method default)
+        isha_interval: Optional fixed Isha time in minutes after Maghrib
+
     Example:
         >>> settings = UserSettings(method='isna', asr_method='standard')
         >>> print(settings.calculation_method)
         'isna'
+        >>> custom_settings = UserSettings(method='isna', fajr_angle=16.5)
+        >>> print(custom_settings.fajr_angle)
+        16.5
     """
 
     def __init__(self,
                  method: str = DEFAULT_CALCULATION_METHOD,
                  asr_method: str = DEFAULT_ASR_METHOD,
-                 hijri_correction: int = DEFAULT_HIJRI_CORRECTION):
+                 hijri_correction: int = DEFAULT_HIJRI_CORRECTION,
+                 fajr_angle: Optional[float] = None,
+                 isha_angle: Optional[float] = None,
+                 isha_interval: Optional[int] = None):
         """
         Initialize user settings
 
         Args:
-            method (str, optional): Calculation method key. Defaults to 
+            method (str, optional): Calculation method key. Defaults to
             DEFAULT_CALCULATION_METHOD.
-            
+
             asr_method (str, optional): 'standard' or 'hanafi'. Defaults to
             DEFAULT_ASR_METHOD.
-            
+
             hijri_correction (int, optional): Days to adjust Hijri date.
             Defaults to DEFAULT_HIJRI_CORRECTION.
+
+            fajr_angle (Optional[float], optional): Custom Fajr angle in degrees.
+            Overrides method's default. Defaults to None.
+
+            isha_angle (Optional[float], optional): Custom Isha angle in degrees.
+            Overrides method's default. Defaults to None.
+
+            isha_interval (Optional[int], optional): Fixed Isha time in minutes
+            after Maghrib. Overrides method's default. Defaults to None.
 
         Raises:
             ValueError: If method key is invalid.
             ValueError: If asr_method isn't recognized.
+            ValueError: If fajr_angle is out of valid range (0-30 degrees).
+            ValueError: If isha_angle is out of valid range (0-30 degrees).
+            ValueError: If isha_interval is out of valid range (0-240 minutes).
+            ValueError: If both isha_angle and isha_interval are specified.
         """
         # Checking if method exsists
         if method not in CALCULATION_METHODS:
@@ -375,9 +429,44 @@ class UserSettings:
                 f"Must be 'standard' or 'hanafi'."
             )
 
+        # Validate custom Fajr angle
+        if fajr_angle is not None:
+            if not (0 < fajr_angle < 30):
+                raise ValueError(
+                    f"Invalid fajr_angle '{fajr_angle}'. "
+                    f"Must be between 0 and 30 degrees."
+                )
+
+        # Validate custom Isha angle
+        if isha_angle is not None:
+            if not (0 < isha_angle < 30):
+                raise ValueError(
+                    f"Invalid isha_angle '{isha_angle}'. "
+                    f"Must be between 0 and 30 degrees."
+                )
+
+        # Validate custom Isha interval
+        if isha_interval is not None:
+            if not (0 < isha_interval <= 240):
+                raise ValueError(
+                    f"Invalid isha_interval '{isha_interval}'. "
+                    f"Must be between 0 and 240 minutes."
+                )
+
+        # Check mutual exclusivity of isha_angle and isha_interval
+        if isha_angle is not None and isha_interval is not None:
+            raise ValueError(
+                "Cannot specify both isha_angle and isha_interval. "
+                "Use isha_angle for angle-based calculation or "
+                "isha_interval for fixed-time calculation."
+            )
+
         self.calculation_method = method
         self.asr_method = asr_method
         self.hijri_correction = hijri_correction
+        self.fajr_angle = fajr_angle
+        self.isha_angle = isha_angle
+        self.isha_interval = isha_interval
 
 
     def __repr__(self):
@@ -386,4 +475,7 @@ class UserSettings:
         """
         return (f"UserSettings(method='{self.calculation_method}', "
                 f"asr_method='{self.asr_method}', "
-                f"hijri_correction={self.hijri_correction})")
+                f"hijri_correction={self.hijri_correction}, "
+                f"fajr_angle={self.fajr_angle}, "
+                f"isha_angle={self.isha_angle}, "
+                f"isha_interval={self.isha_interval})")

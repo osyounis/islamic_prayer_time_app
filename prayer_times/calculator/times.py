@@ -13,10 +13,10 @@ Date: 20/10/2025 [dd/mm/yyyy]
 
 import math
 from datetime import datetime, timedelta, timezone
-from typing import Dict
+from typing import Dict, Optional
 from zoneinfo import ZoneInfo
 
-from prayer_times.config import get_fajr_angle, get_isha_config, HIGH_LATITUDE_THRESHOLD
+from prayer_times.config import get_fajr_angle, get_isha_config, HIGH_LATITUDE_THRESHOLD, UserSettings
 from prayer_times.utils.math_utils import dsin, dcos, dacos, dcot, dacot, dasin
 from prayer_times.core.astronomy import _equation_of_time
 
@@ -111,14 +111,15 @@ def fajr_time_calc(timestamp: datetime,
                    sun_data: Dict[str, float],
                    conven: str,
                    sunrise_time: datetime,
-                   maghrib_time: datetime) -> datetime:
+                   maghrib_time: datetime,
+                   settings: Optional[UserSettings] = None) -> datetime:
     """
     Calculates the pray time for Fajr.
-    
+
     Fajr is the pre-dawn prayer. The time begins when the sky starts to lighten
     (otherwise known as astronomical twilight). Different Islamic calculation
     methods use different angles below the horizon to define this moment.
-    
+
     NOTE: For high latitudes (> 48.5°), the Angle-Based Rule is used to handle
           the case where normal twilight doesn't happen.
 
@@ -129,11 +130,12 @@ def fajr_time_calc(timestamp: datetime,
         conven (str): Which calculation method you use for the angle (e.g. 'isna', 'uqu').
         sunrise_time (datetime): Sunrise time (needed for high latitude calculation).
         maghrib_time (datetime): Maghrib time (needed for high latitude calculation).
+        settings (Optional[UserSettings]): User settings with potential custom angle.
 
     Returns:
         datetime: Fajr prayer time.
     """
-    fajr_angle = get_fajr_angle(conven)
+    fajr_angle = get_fajr_angle(conven, settings)
 
     # No need to adjust for high latitude.
     if abs(lat) <= HIGH_LATITUDE_THRESHOLD:
@@ -248,20 +250,21 @@ def isha_time_calc(timestamp: datetime,
                    conven: str,
                    maghrib_time: datetime,
                    sunrise_time: datetime,
-                   ramadan: bool=False) -> datetime:
+                   ramadan: bool=False,
+                   settings: Optional[UserSettings] = None) -> datetime:
     """
     Calculates the Isha prayer time.
-    
+
     Isha is the night prayer. Most calculations are based on the Sun's angle
     below the horizon, similar to Fajr.
-    
+
     Special cases example:
         Umm Al-Qura University (Makkah) uses a fixed time offset:
         - 90 minutes after Maghrib (normal months)
         - 120 minutes after Maghirb (during Ramadan)
 
     For high latitudes, the Angle-Based Rule is used.
-    
+
     Args:
         timestamp (datetime): Time of solar midday.
         lat (float): Your latitude in degrees.
@@ -270,12 +273,13 @@ def isha_time_calc(timestamp: datetime,
         maghrib_time (datetime): Maghrib time (needed for special case and high lat).
         sunrise_time (datetime): Sunrise time (needed for special case and high lat).
         ramadan (bool, optional): Is it Ramadan? Used for special case. Defaults: False.
+        settings (Optional[UserSettings]): User settings with potential custom angle.
 
     Returns:
         datetime: Isha prayer time.
     """
     # Get Isha configuration (handles both angle-based and fixed-time methods)
-    isha_config = get_isha_config(conven)
+    isha_config = get_isha_config(conven, settings)
 
     # Check if we need to use fixed-time method (e.g. 'uqu')
     if isha_config['type'] == 'fixed_time':

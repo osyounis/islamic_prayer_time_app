@@ -24,6 +24,8 @@ This project also attempts to explain how these calculations are done.
 - ⚙️ Supports multiple calculation methods used globally (ISNA, MWL, UQU, etc.).
 - ⚙️ Supports two Asr calculation methods (Hanafi and Standard [All Others]).
 - 🌐 Uses Angle-Based Rule for high latitude adjustments (regions above 48.5° and below -48.5°).
+- 🔬 Custom angle support for research and testing different calculation parameters.
+- 💻 Command-line interface (CLI) for easy access from terminal.
 - 📦 Does not use any external dependencies or libraries (uses pure Python).
 
 ---
@@ -52,16 +54,140 @@ pip install git+https://github.com/osyounis/islamic_prayer_time_app.git
 ```
 
 ### Basic Usage
-To use this app, all you need to do is run the `main.py` file by running either:
+
+#### Option 1: Command-Line Interface (Recommended)
+After installation, you can use the `prayer-times` command from anywhere:
+
+```bash
+# Basic usage (uses your current location's timezone)
+prayer-times 33.88 -117.928611
+
+# With timezone specified
+prayer-times 40.7128 -74.0060 --timezone America/New_York
+
+# With elevation and specific date
+prayer-times 51.5074 -0.1278 \
+  --elevation 11 \
+  --timezone Europe/London \
+  --date 2025-03-15
+
+# Using different calculation method
+prayer-times 21.4225 39.8262 \
+  --method uqu \
+  --timezone Asia/Riyadh
+
+# List all available calculation methods
+prayer-times --list-methods
+
+# See all options
+prayer-times --help
+```
+
+#### Option 2: Python Script
+Alternatively, you can run the `main.py` file:
 ```bash
 python3 main.py
 ```
-or
-```bash
-python main.py
-```
 
 Edit the configuration section in `main.py` to use your own custom settings for calculations (like your location).
+
+---
+
+## 💻 CLI Reference
+
+### Command Syntax
+```bash
+prayer-times [OPTIONS] LATITUDE LONGITUDE
+```
+
+### Required Arguments
+- `LATITUDE` - Latitude in degrees (-90 to 90, positive for North)
+- `LONGITUDE` - Longitude in degrees (-180 to 180, positive for East)
+
+### Optional Arguments
+
+#### Location Settings
+- `-e, --elevation METERS` - Elevation in meters above sea level (default: 0)
+- `-z, --timezone TZ` - IANA timezone name (e.g., America/New_York, Asia/Dubai)
+
+#### Date Settings
+- `-d, --date YYYY-MM-DD` - Date to calculate in ISO 8601 format (default: today)
+
+#### Calculation Methods
+- `-m, --method METHOD` - Calculation method: isna, mwl, egas, uqu, uisk, ut, lri, gulf, jakim (default: isna)
+- `-a, --asr-method ASR` - Asr calculation: standard or hanafi (default: standard)
+- `--hijri-correction DAYS` - Days to adjust Hijri date, e.g., +1 or -1 (default: 0)
+
+#### Custom Angles (Research)
+- `--fajr-angle DEGREES` - Custom Fajr angle (0-30°, overrides method default)
+- `--isha-angle DEGREES` - Custom Isha angle (0-30°, overrides method default)
+- `--isha-interval MINUTES` - Fixed Isha time in minutes after Maghrib (0-240)
+
+**Note:** You cannot use both `--isha-angle` and `--isha-interval` together.
+
+#### Information
+- `--list-methods` - List all available calculation methods and exit
+- `-v, --version` - Show version and exit
+- `-h, --help` - Show help message and exit
+
+### CLI Usage Examples
+
+#### Basic Calculations
+```bash
+# New York City
+prayer-times 40.7128 -74.0060 --timezone America/New_York
+
+# London with elevation
+prayer-times 51.5074 -0.1278 --elevation 11 --timezone Europe/London
+
+# Makkah
+prayer-times 21.4225 39.8262 --timezone Asia/Riyadh --method uqu
+```
+
+#### Using Different Methods
+```bash
+# Compare ISNA vs MWL for same location
+prayer-times 33.88 -117.928611 --method isna --timezone America/Los_Angeles
+prayer-times 33.88 -117.928611 --method mwl --timezone America/Los_Angeles
+
+# Hanafi Asr calculation
+prayer-times 40.7128 -74.0060 --asr-method hanafi --timezone America/New_York
+```
+
+#### Custom Angles for Research
+Custom angles allow you to test prayer time calculations for countries or regions not included in the default methods:
+
+```bash
+# Test custom Fajr angle
+prayer-times 25.2048 55.2708 --fajr-angle 16.5 --timezone Asia/Dubai
+
+# Test custom Isha angle
+prayer-times 25.2048 55.2708 --isha-angle 13.5 --timezone Asia/Dubai
+
+# Test both custom angles
+prayer-times 25.2048 55.2708 \
+  --fajr-angle 17 \
+  --isha-angle 14 \
+  --timezone Asia/Dubai
+
+# Test custom Isha interval (minutes after Maghrib)
+prayer-times 21.4225 39.8262 --isha-interval 95 --timezone Asia/Riyadh
+```
+
+#### Specific Dates
+```bash
+# Calculate for specific date
+prayer-times 40.7128 -74.0060 \
+  --date 2025-06-15 \
+  --timezone America/New_York
+
+# Ramadan calculation (Hijri correction)
+prayer-times 21.4225 39.8262 \
+  --date 2025-03-01 \
+  --method uqu \
+  --hijri-correction -1 \
+  --timezone Asia/Riyadh
+```
 
 ---
 
@@ -111,16 +237,41 @@ The bearing is given in degrees clockwise from true North (0° = North, 90° = E
 
 ## ⚙️ Configuration Options
 ### `UserSettings` Parameters
-There are three parameters you can customize when a user's settings. These are showed in the following code block.
+You can customize prayer time calculations using the `UserSettings` class:
+
 ```python
 from prayer_times.config import UserSettings
 
+# Basic settings
 settings = UserSettings(
-    method='isna'           # Calculation method for Fajr and Isha
-    asr_method='standard'   # 'standard' or 'hanafi'
-    hijri_correction=0      # Days to adjust Hijri date (e.g. +1, -1)
+    method='isna',           # Calculation method for Fajr and Isha
+    asr_method='standard',   # 'standard' or 'hanafi'
+    hijri_correction=0       # Days to adjust Hijri date (e.g. +1, -1)
+)
+
+# With custom angles (for research)
+custom_settings = UserSettings(
+    method='isna',
+    fajr_angle=17.0,         # Custom Fajr angle in degrees (overrides method)
+    isha_angle=14.0          # Custom Isha angle in degrees (overrides method)
+)
+
+# With custom Isha interval
+interval_settings = UserSettings(
+    method='isna',
+    isha_interval=95         # Fixed minutes after Maghrib (overrides method)
 )
 ```
+
+**Parameters:**
+- `method` (str): Calculation method - `isna`, `mwl`, `egas`, `uqu`, `uisk`, `ut`, `lri`, `gulf`, `jakim` (default: `'isna'`)
+- `asr_method` (str): Asr calculation - `'standard'` or `'hanafi'` (default: `'standard'`)
+- `hijri_correction` (int): Days to adjust Hijri date, typically -2 to +2 (default: `0`)
+- `fajr_angle` (float, optional): Custom Fajr angle in degrees, 0-30° (default: `None`)
+- `isha_angle` (float, optional): Custom Isha angle in degrees, 0-30° (default: `None`)
+- `isha_interval` (int, optional): Fixed Isha time in minutes after Maghrib, 0-240 (default: `None`)
+
+**Note:** Custom angles override the method's default values and enable research into prayer time calculations used by unlisted countries.
 ### High Latitude Adjustments
 In areas far from the equator (48.5° latitude North and South of the equator), the Sun may not reach the angles required fro Fajr and Isha. There are multiple methods to solve this issue. They are different algorithms to calculate Fajr and Isha at these locations. Some of these algorithms are:
 - **Middle of Night:** Fajr/Isha times based on middle of the night.
@@ -239,6 +390,7 @@ islamic_prayer_time_app/
   ├── main.py                          # Simple example script
   ├── prayer_times/                    # Main package
   │   ├── config.py                    # Configuration and constants
+  │   ├── cli.py                       # Command-line interface
   │   ├── calculator/
   │   │   ├── calculator.py            # Main calculation orchestrator
   │   │   └── times.py                 # Prayer time calculations
@@ -255,7 +407,8 @@ islamic_prayer_time_app/
   │   ├── test_qibla.py
   │   ├── test_times.py
   │   ├── test_calculator.py
-  │   └── test_math.py
+  │   ├── test_math.py
+  │   └── test_cli.py                  # CLI tests
   ├── docs/                            # Documentation
   │   ├── api_reference.md
   │   ├── calculation_methodology.md
@@ -297,8 +450,9 @@ All tests are automatically run via GitHub Actions on every push and pull reques
 - ✅ **Qibla direction** - Major cities worldwide, edge cases (19 tests)
 - ✅ **Prayer time calculations** - All 5 prayers + sunrise, multiple methods (23 tests)
 - ✅ **Main calculator** - Full integration tests (12 tests)
+- ✅ **CLI interface** - Argument parsing, validation, output formatting, integration (74 tests)
 
-**Total: 105 tests ✅**
+**Total: 179 tests ✅**
 
 ---
 
