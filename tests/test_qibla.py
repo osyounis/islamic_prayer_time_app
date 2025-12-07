@@ -266,7 +266,7 @@ class TestQiblaEdgeCases(unittest.TestCase):
     Test the edge cases when calculation the Qibla direction.
     """
 
-    def international_date_line(self) -> None:
+    def test_international_date_line(self) -> None:
         """
         Tests the Qibla calculation near the International Date Line. Tests that
         the longitude wrapping works (180° / -180°).

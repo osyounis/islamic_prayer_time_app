@@ -599,6 +599,12 @@ class TestIntegrationCLI(unittest.TestCase):
         settings = UserSettings(method='isna', asr_method='standard')
         api_results = calculate_prayer_times(40.7128, -74.0060, 10, date, settings)
 
+        # Validate API results are correct
+        self.assertIsNotNone(api_results)
+        self.assertIn('times', api_results)
+        self.assertIn('times_rounded', api_results)
+        self.assertIn('qibla', api_results)
+
         # Run CLI (should use same calculation)
         argv = [
             '40.7128', '-74.0060',
