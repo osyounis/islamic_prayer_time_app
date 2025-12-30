@@ -132,6 +132,32 @@ def create_parser() -> argparse.ArgumentParser:
              'Valid range: 0-240 minutes. Cannot use with --isha-angle.'
     )
 
+    # Reverse calculation arguments
+    reverse = parser.add_argument_group('reverse calculation (research)')
+    reverse.add_argument(
+        '--reverse',
+        action='store_true',
+        help='Enable reverse calculation mode (calculate angles from observed times)'
+    )
+    reverse.add_argument(
+        '--fajr-time',
+        type=str,
+        metavar='HH:MM',
+        help='Observed Fajr time in HH:MM format (24-hour, required with --reverse)'
+    )
+    reverse.add_argument(
+        '--maghrib-time',
+        type=str,
+        metavar='HH:MM',
+        help='Observed Maghrib time in HH:MM format (24-hour, required with --reverse)'
+    )
+    reverse.add_argument(
+        '--isha-time',
+        type=str,
+        metavar='HH:MM',
+        help='Observed Isha time in HH:MM format (24-hour, required with --reverse)'
+    )
+
     # Information arguments
     parser.add_argument(
         '--list-methods',
@@ -210,6 +236,32 @@ def parse_date(date_str: str, timezone_str: Optional[str] = None) -> datetime:
             day=date_obj.day,
             hour=0, minute=0, second=0, microsecond=0
         )
+
+
+def parse_time_string(time_str: str, date: datetime) -> datetime:
+    """
+    Parses HH:MM time string and combines with date.
+
+    Args:
+        time_str (str): Time in HH:MM format (24-hour)
+        date (datetime): Date to combine with (must be timezone-aware)
+
+    Returns:
+        datetime: Combined date and time (timezone-aware)
+
+    Raises:
+        ValueError: If time format is invalid
+    """
+    try:
+        hour, minute = map(int, time_str.split(':'))
+        if not (0 <= hour <= 23 and 0 <= minute <= 59):
+            raise ValueError("Hour must be 0-23, minute must be 0-59")
+        return date.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    except (ValueError, AttributeError) as exc:
+        raise ValueError(
+            f"Invalid time format: '{time_str}'. Use HH:MM format (24-hour), "
+            f"e.g., 05:30 or 18:15"
+        ) from exc
 
 
 def format_output(results: dict, settings: UserSettings,
@@ -303,6 +355,92 @@ def list_methods() -> str:
     return output
 
 
+def format_reverse_output(results: dict, lat: float, lng: float, elev: float,
+                         fajr_time: str, maghrib_time: str, isha_time: str,
+                         date: datetime) -> str:
+    """
+    Formats reverse calculation results as human-readable output.
+
+    Args:
+        results (dict): Results from ReversePrayerCalculator.reverse_calculate()
+        lat (float): Latitude
+        lng (float): Longitude
+        elev (float): Elevation
+        fajr_time (str): Input Fajr time string
+        maghrib_time (str): Input Maghrib time string
+        isha_time (str): Input Isha time string
+        date (datetime): Date of calculation
+
+    Returns:
+        str: Formatted output string
+    """
+    output = f"""
+╔════════════════════════════════════════════════════════════╗
+║         Islamic Prayer Time Reverse Calculator             ║
+╚════════════════════════════════════════════════════════════╝
+📍 Location
+    Latitude:  {lat}°
+    Longitude: {lng}°
+    Elevation: {elev}m
+
+📅 Date: {date.strftime("%A, %B %d, %Y")}
+
+⏰ Input Prayer Times
+══════════════════════════════════════
+Fajr        {fajr_time}
+Maghrib     {maghrib_time}
+Isha        {isha_time}
+══════════════════════════════════════
+
+📐 Calculated Angles
+══════════════════════════════════════
+Fajr Angle:     {results['fajr_angle']:6.2f}° below horizon"""
+
+    # Add method info if high latitude
+    if results['fajr_method'] == 'high_latitude':
+        output += " (Angle-Based Rule)"
+
+    output += f"""
+Isha Angle:     {results['isha_angle']:6.2f}° below horizon"""
+
+    if results['isha_method'] == 'high_latitude':
+        output += " (Angle-Based Rule)"
+
+    output += f"""
+Isha Interval:  {results['isha_minutes']:6.1f} minutes after Maghrib
+══════════════════════════════════════
+
+📊 Astronomical Data
+══════════════════════════════════════
+Solar Noon:     {results['midday'].strftime("%I:%M:%S %p")}  [{results['midday'].strftime("%H:%M:%S")}]
+Sunrise:        {results['sunrise'].strftime("%I:%M:%S %p")}  [{results['sunrise'].strftime("%H:%M:%S")}]
+══════════════════════════════════════
+"""
+
+    # Add warnings if any
+    if results['warnings']:
+        output += "\n⚠️  Warnings:\n"
+        for warning in results['warnings']:
+            output += f"  • {warning}\n"
+        output += "\n"
+
+    # Add interpretation help
+    output += """
+💡 Interpretation:
+  These angles represent the Sun's position below the horizon at the
+  observed prayer times. You can use these to identify which calculation
+  method best matches your local mosque's times.
+
+  Common methods for comparison:
+    ISNA:  Fajr 15°, Isha 15°
+    MWL:   Fajr 18°, Isha 17°
+    EGAS:  Fajr 19.5°, Isha 17.5°
+    UQU:   Fajr 18.5°, Isha 90 min after Maghrib
+"""
+
+    return output
+
+
 def main(argv=None) -> int:
     """
     Main CLI entry point.
@@ -325,6 +463,61 @@ def main(argv=None) -> int:
         # Check that latitude and longitude are provided
         if args.latitude is None or args.longitude is None:
             parser.error("the following arguments are required: latitude, longitude")
+
+        # Handle reverse mode
+        if args.reverse:
+            # Validate timezone is provided
+            if not args.timezone:
+                parser.error("--timezone is required when using --reverse")
+
+            # Validate all times are provided
+            if not all([args.fajr_time, args.maghrib_time, args.isha_time]):
+                parser.error(
+                    "--fajr-time, --maghrib-time, and --isha-time are "
+                    "required with --reverse"
+                )
+
+            # Validate coordinates
+            validate_coordinates(args.latitude, args.longitude)
+
+            # Parse date
+            if args.date:
+                date = parse_date(args.date, args.timezone)
+            else:
+                # Use today's date
+                try:
+                    tz = ZoneInfo(args.timezone)
+                    date = datetime.now(tz)
+                except ZoneInfoNotFoundError as exc:
+                    raise ZoneInfoNotFoundError(
+                        f"Invalid timezone: '{args.timezone}'. "
+                        f"Use IANA timezone names (e.g., America/New_York)"
+                    ) from exc
+
+            # Parse time strings
+            fajr_time = parse_time_string(args.fajr_time, date)
+            maghrib_time = parse_time_string(args.maghrib_time, date)
+            isha_time = parse_time_string(args.isha_time, date)
+
+            # Create reverse calculator
+            from prayer_times.calculator.reverse_calculator import ReversePrayerCalculator
+            calc = ReversePrayerCalculator(
+                args.latitude, args.longitude, args.elevation
+            )
+
+            # Perform reverse calculation
+            results = calc.reverse_calculate(
+                date, fajr_time, maghrib_time, isha_time
+            )
+
+            # Format and print output
+            output = format_reverse_output(
+                results, args.latitude, args.longitude, args.elevation,
+                args.fajr_time, args.maghrib_time, args.isha_time, date
+            )
+            print(output)
+
+            return 0
 
         # Validate coordinates
         validate_coordinates(args.latitude, args.longitude)
