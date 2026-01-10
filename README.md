@@ -2,9 +2,10 @@
 بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
 </h3><br>
 
+# Islamic Prayer Time App
+
 ![Project Banner](./assets/islamic-prayer-time-banner.jpg)
 
-# Islamic Prayer Time App
 A Python approach for calculating Islamic prayer times and Qibla direction based on astronomical calculations.
 
 [![Tests](https://github.com/osyounis/islamic_prayer_time_app/actions/workflows/tests.yml/badge.svg)](https://github.com/osyounis/islamic_prayer_time_app/actions/workflows/tests.yml)
